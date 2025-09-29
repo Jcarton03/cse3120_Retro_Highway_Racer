@@ -1,6 +1,4 @@
-# cse3120_Retro_Highway_Racer
-
-**Retro Highway Racer (MASM + Irvine32)**
+# Retro Highway Racer (MASM + Irvine32)
 
 Using mainly MASM, the goal is to make a top-down ASCII retro highway racing game that randomly places obstacles in the highway stream at a set interval & speed. Score climbs with time and speed. 
 
