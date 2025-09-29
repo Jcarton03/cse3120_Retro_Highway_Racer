@@ -16,6 +16,6 @@ Using mainly MASM, the goal is to make a top-down ASCII retro highway racing gam
 - Esc: Quit
 
 **Credits**
-Team: Jacob Carton & Matthew Goembel
-Instructor: Dr. Silaghi
-Libraries: Irvine32, 
+- Team: Jacob Carton & Matthew Goembel
+- Instructor: Dr. Silaghi
+- Libraries: Irvine32, 
