@@ -42,3 +42,10 @@ playerLane      BYTE    1               ; start in middle lane
 alive           BYTE    1               ; 1 = running, 0 = dead
 score           DWORD   0               ; 
 highScore       DWORD   0               ; run per session
+
+; Game timing & difficulty, can modify later
+tickDelay       WORD    120             ; The ms per frame, for speeding down/up
+spawnOdds       BYTE    14              ; percentage (0..100). Spawn if roll < spawnOdds
+tickCount       DWORD   0               ; tracks frames to known when to speed up/increase difficulty
+
+
