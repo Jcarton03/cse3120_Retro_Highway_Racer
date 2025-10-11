@@ -32,3 +32,7 @@ LANE_CHAR       EQU     ':'         ; lane marker glyph
 COLOR_HUD       EQU     (yellow)                 ; HUD text color on black background
 COLOR_ROAD      EQU     (white + (black*16))     ; road text color 
 
+; ======================= DATA =======================
+.data
+; Column centers for each lane (Modiofy to make wider/narrower)
+laneX           BYTE    18, 28, 38
