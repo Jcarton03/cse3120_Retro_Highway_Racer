@@ -36,3 +36,9 @@ COLOR_ROAD      EQU     (white + (black*16))     ; road text color
 .data
 ; Column centers for each lane (Modiofy to make wider/narrower)
 laneX           BYTE    18, 28, 38
+
+; Game start state
+playerLane      BYTE    1               ; start in middle lane
+alive           BYTE    1               ; 1 = running, 0 = dead
+score           DWORD   0               ; 
+highScore       DWORD   0               ; run per session
