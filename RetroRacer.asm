@@ -1,0 +1,34 @@
+; ===========================================================
+;RetroRacer.asm
+;------------------------------------------------------------
+; Controls:   A / D  or  ← / →  to change lanes.   ESC to quit.
+; Goal:       Dodge obstacles on the highway. Get the highest Score.
+;             Score increases over time.
+; Difficulty: Spawn chance and speed ramp automatically.
+; ============================================================
+
+.386
+.model flat, stdcall
+.stack 4096
+ExitProcess PROTO, dwExitCode:DWORD
+
+INCLUDE Irvine32.inc
+
+; ======================= Constants =========================
+LANES           EQU     3           ; # of lanes 
+MAX_OBS         EQU     32          ; max active obstacles tracked at once
+
+BORDER_LEFT     EQU     12          ; left wall x-position, (col)
+BORDER_RIGHT    EQU     44          ; right wall x-position, (row)
+ROAD_TOP        EQU     2           ; first highway row
+ROAD_BOTTOM     EQU     23          ; last highway row
+PLAYER_ROW      EQU     (ROAD_BOTTOM-1) ; where the car sits (second line from the bottom)
+
+PLAYER_CHAR     EQU     '^'         ; player glyph
+OB_CHAR         EQU     '#'         ; obstacle glyph
+BORDER_CHAR     EQU     '|'         ; border glyph
+LANE_CHAR       EQU     ':'         ; lane marker glyph
+
+COLOR_HUD       EQU     (yellow)                 ; HUD text color on black background
+COLOR_ROAD      EQU     (white + (black*16))     ; road text color 
+
