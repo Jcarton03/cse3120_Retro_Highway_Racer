@@ -59,6 +59,7 @@ helpStr         BYTE    "A/D or <-/-> to move, and ESC to quit",0
 scoreStr        BYTE    "Score: ",0
 hiStr           BYTE    "High Score: ",0
 gameOverStr     BYTE    "GAME OVER! Press any key to continue...",0
+
 ; ======================= PROTOTYPES =======================
 
 
