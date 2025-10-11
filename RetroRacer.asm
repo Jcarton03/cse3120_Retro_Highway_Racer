@@ -48,4 +48,8 @@ tickDelay       WORD    120             ; The ms per frame, for speeding down/up
 spawnOdds       BYTE    14              ; percentage (0..100). Spawn if roll < spawnOdds
 tickCount       DWORD   0               ; tracks frames to known when to speed up/increase difficulty
 
+; Obstacles are arrays [0..2] for simplicity:
+obs_active      BYTE    MAX_OBS DUP(0)  ; 1 if in use, clears after user dodges
+obs_lane        BYTE    MAX_OBS DUP(0)  ; lane index (0..LANES-1)
+obs_row         BYTE    MAX_OBS DUP(0)  ; obstacle -> current row (0..ROAD_BOTTOM)
 
