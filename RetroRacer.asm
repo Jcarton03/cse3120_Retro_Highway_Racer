@@ -53,3 +53,9 @@ obs_active      BYTE    MAX_OBS DUP(0)  ; 1 if in use, clears after user dodges
 obs_lane        BYTE    MAX_OBS DUP(0)  ; lane index (0..LANES-1)
 obs_row         BYTE    MAX_OBS DUP(0)  ; obstacle -> current row (0..ROAD_BOTTOM)
 
+; Game HUD/UI strings
+titleStr        BYTE    "RETRO HIGHWAY RACER",0
+helpStr         BYTE    "A/D or <-/-> to move, and ESC to quit",0
+scoreStr        BYTE    "Score: ",0
+hiStr           BYTE    "High Score: ",0
+gameOverStr     BYTE    "GAME OVER! Press any key to continue...",0
