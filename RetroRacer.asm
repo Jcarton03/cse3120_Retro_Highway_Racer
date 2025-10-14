@@ -84,3 +84,21 @@ main PROC
     call InitGame
 
     ; Main loop runs while player is alive (alive = 1)
+
+GameLoop:
+    cmp alive, 1
+    jne EndGame                 ; Check if player died, leave the loop
+
+    ; Handle input (A/D --> left/right)
+    call PollInput
+
+    ; Spawn a new obstacle at top row in a random lane
+    call SpawnObstacle
+
+    ; Shift all the active obstacles down by 1 row, and clear the onesoff screen.
+    call UpdateObstacles
+
+    ; If player runs into obstacle, they die.
+    call CheckCollision
+
+    
