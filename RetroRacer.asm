@@ -64,6 +64,7 @@ gameOverStr     BYTE    "GAME OVER! Press any key to continue...",0
 .code
 
 InitGame            PROTO
+PollInput           PROTO
 ClearObstacles      PROTO
 SpawnObstacle       PROTO
 UpdateObstacles     PROTO
@@ -73,7 +74,6 @@ DrawHUD             PROTO
 DrawRoad            PROTO
 DrawPlayer          PROTO
 DrawObstacles       PROTO
-PollInput           PROTO
 RampDifficulty      PROTO
 GameOverScreen      PROTO
 
@@ -122,4 +122,91 @@ EndGame:
     INVOKE ExitProcess, 0
 main ENDP
 
-    
+; ===================================================================
+; InitGame — sets start game state,  UI, colors and clear obstacle lists
+; ===================================================================
+
+
+
+; ===================================================================
+; PollInput — read a key if present and adjust player lane.
+; Uses Irvine ReadKey: ZF=1 if no key was available.
+; - ESC exits fast program via ExitProcess.
+; - A, a, or Left arrow -> lane - 1 (min 0)
+; - D, d, or Right arrow -> lane + 1 (max LANES-1)
+; ===================================================================
+
+
+
+; ===================================================================
+; ClearObstacles — sets all active obstacles (obs_active) entries to 0 (no obstacles).
+; ===================================================================
+
+
+
+; ===================================================================
+; SpawnObstacle — pick random #, 0-99 and if pick < spawnOdds, activate a obstacle slot.
+; - Picks first free slot.
+; - Spawns at row 0 in a random lane
+; ===================================================================
+
+
+
+; ===================================================================
+; UpdateObstacles — all the active obstacle moves down by 1 row
+; deactive/clear when past ROAD_BOTTOM.
+; ===================================================================
+
+
+
+; ===================================================================
+; CheckCollision — if any obstacle is at the players row AND same lane,
+; set alive = 0(player loses) and updates score/highScore.
+; ===================================================================
+
+
+
+
+; ===================================================================
+; DrawFrame — clears the screen and draws HUD, road, obstacle, player
+; ===================================================================
+
+
+
+; ===================================================================
+; DrawHUD — title, controls text, and score/highscore above the game board
+; ===================================================================
+
+
+
+; ===================================================================
+; DrawRoad — draws left/right borders and dotted lane markers, like a highway
+; ===================================================================
+
+
+
+; ===================================================================
+; DrawPlayer — print the player icon atthe fixed row and current lane 
+; column, updats on moves
+; ===================================================================
+
+
+
+; ===================================================================
+; DrawObstacles — print an obstacle for each active obstacle at (row, lane)
+; ===================================================================
+
+
+
+; ===================================================================
+; RampDifficulty — every 80 ish ticks, decrease the delay and increase the spawn rate.
+; - tickDelay = max(55, tickDelay - 2)
+; - spawnOdds = min(45, spawnOdds + 1)
+; ===================================================================
+
+
+
+; ===================================================================
+; GameOverScreen — print gmae over tesxt, update high score,
+; then await key oress before returning and ExitProcess
+; ===================================================================
