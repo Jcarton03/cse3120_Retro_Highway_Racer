@@ -55,12 +55,18 @@ obs_row         BYTE    MAX_OBS DUP(0)  ; obstacle -> current row (0..ROAD_BOTTO
 
 ; Game HUD/UI strings
 titleStr        BYTE    "RETRO HIGHWAY RACER",0
-helpStr         BYTE    "A/D or <-/-> to move, and ESC to quit",0
+controlsStr         BYTE    "A/D or <-/-> to move, and ESC to quit",0
 scoreStr        BYTE    "Score: ",0
-hiStr           BYTE    "High Score: ",0
+highscoreStr           BYTE    "High Score: ",0
 gameOverStr     BYTE    "GAME OVER! Press any key to continue...",0
 
 ; ======================= PROTOTYPES =======================
+.code
 
+InitGame            PROTO
+ClearObstacles      PROTO
+SpawnObstacle       PROTO
+UpdateObstacles     PROTO
+CheckCollision      PROTO
 
 ; ======================= Main =======================
