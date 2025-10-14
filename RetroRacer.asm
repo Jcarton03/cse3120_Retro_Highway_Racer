@@ -95,10 +95,26 @@ GameLoop:
     ; Spawn a new obstacle at top row in a random lane
     call SpawnObstacle
 
-    ; Shift all the active obstacles down by 1 row, and clear the onesoff screen.
+    ; Shift all active obstacles down by 1 row, and clear the ones off screen
     call UpdateObstacles
 
-    ; If player runs into obstacle, they die.
+    ; If players hits an obstacle, they die.
     call CheckCollision
+
+    ; Draw everything for the current frame (HUD + road + player + obstacle)
+    call DrawFrame
+
+    ; Gradually increases the difficulty (faster ticks, more obstacle spawns)
+    call RampDifficulty
+
+    ; Increase score each tick (simple time-based survival scoring)
+    add score, 1
+
+    ; Wait until next frame, manage game speed/diff
+    movzx eax, tickDelay
+    call Delay
+
+    jmp GameLoop            ; loop till they die
+
 
     
