@@ -68,5 +68,13 @@ ClearObstacles      PROTO
 SpawnObstacle       PROTO
 UpdateObstacles     PROTO
 CheckCollision      PROTO
+DrawFrame           PROTO
+DrawHUD             PROTO
+DrawRoad            PROTO
+DrawPlayer          PROTO
+DrawObstacles       PROTO
+PollInput           PROTO
+RampDifficulty      PROTO
+GameOverScreen      PROTO
 
 ; ======================= Main =======================
