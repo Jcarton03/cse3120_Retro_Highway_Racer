@@ -116,5 +116,10 @@ GameLoop:
 
     jmp GameLoop            ; loop till they die
 
+EndGame:
+    ; Show game over screen, update high score if needed, wait for next key press.
+    call GameOverScreen
+    INVOKE ExitProcess, 0
+main ENDP
 
     
