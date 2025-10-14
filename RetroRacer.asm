@@ -78,3 +78,9 @@ RampDifficulty      PROTO
 GameOverScreen      PROTO
 
 ; ======================= Main =======================
+
+main PROC
+    ; Initialize random, colors, variables, clear screen.
+    call InitGame
+
+    ; Main loop runs while player is alive (alive = 1)
