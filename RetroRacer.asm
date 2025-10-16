@@ -1,10 +1,10 @@
 ; ===========================================================
 ;RetroRacer.asm
 ;------------------------------------------------------------
-; Controls:   A / D  or  ← / →  to change lanes.   ESC to quit.
-; Goal:       Dodge obstacles on the highway. Get the highest Score.
-;             Score increases over time.
-; Difficulty: Spawn chance and speed ramp automatically.
+; Controls:   A / D  or  ← / →  to change lanes.   ESC to quit. (Interrupts)
+; Goal:       Dodge obstacles on the highway. Get the highest Score. 
+;             Score increases over time, increasing faster with difficulty (Google Dino game-esque)
+; Difficulty: Spawn chance, speed ramp automatically, and number of lanes with obstacles(maybe)
 ; ============================================================
 
 .386
@@ -15,14 +15,14 @@ ExitProcess PROTO, dwExitCode:DWORD
 INCLUDE Irvine32.inc
 
 ; ======================= Constants =========================
-LANES           EQU     3           ; # of lanes 
+LANES           EQU     3           ; # of lanes (Need for flushing out a lane, |  :  |, |#:^|, | # : ^ |, ect)
 MAX_OBS         EQU     32          ; max active obstacles tracked at once
 
 BORDER_LEFT     EQU     12          ; left wall x-position, (col)
 BORDER_RIGHT    EQU     44          ; right wall x-position, (row)
 ROAD_TOP        EQU     2           ; first highway row
 ROAD_BOTTOM     EQU     23          ; last highway row
-PLAYER_ROW      EQU     (ROAD_BOTTOM-1) ; where the car sits (second line from the bottom)
+PLAYER_ROW      EQU     (ROAD_BOTTOM-1) ; where the car sits (second line from the bottom, might want higher, or the ability to go up and down)
 
 PLAYER_CHAR     EQU     '^'         ; player glyph
 OB_CHAR         EQU     '#'         ; obstacle glyph
@@ -34,7 +34,7 @@ COLOR_ROAD      EQU     (white + (black*16))     ; road text color
 
 ; ======================= DATA =======================
 .data
-; Column centers for each lane (Modiofy to make wider/narrower)
+; Column centers for each lane (Modify to make wider/narrower)
 laneX           BYTE    18, 28, 38
 
 ; Game start state
@@ -46,7 +46,8 @@ highScore       DWORD   0               ; run per session
 ; Game timing & difficulty, can modify later
 tickDelay       WORD    120             ; The ms per frame, for speeding down/up
 spawnOdds       BYTE    14              ; percentage (0..100). Spawn if roll < spawnOdds
-tickCount       DWORD   0               ; tracks frames to known when to speed up/increase difficulty
+tickCount       DWORD   0               ; tracks frames to know when to speed up/increase difficulty
+obstacleRamp    DWORD   25000           ; amount of time required to increase the number of maximum lanes with obstacles 
 
 ; Obstacles are arrays [0..2] for simplicity:
 obs_active      BYTE    MAX_OBS DUP(0)  ; 1 if in use, clears after user dodges
@@ -154,7 +155,11 @@ main ENDP
 
 ; ===================================================================
 ; UpdateObstacles — all the active obstacle moves down by 1 row
-; deactive/clear when past ROAD_BOTTOM.
+; deactivate/clear when past ROAD_BOTTOM.
+; Check to ensure a valid path for player 
+; Example invalid path:
+; |###:   |
+; |   :###|
 ; ===================================================================
 
 
@@ -186,8 +191,8 @@ main ENDP
 
 
 ; ===================================================================
-; DrawPlayer — print the player icon atthe fixed row and current lane 
-; column, updats on moves
+; DrawPlayer — print the player icon at the fixed row and current lane 
+; column, updates on moves
 ; ===================================================================
 
 
@@ -199,7 +204,7 @@ main ENDP
 
 
 ; ===================================================================
-; RampDifficulty — every 80 ish ticks, decrease the delay and increase the spawn rate.
+; RampDifficulty — every 80-ish ticks, decrease the delay and increase the spawn rate.
 ; - tickDelay = max(55, tickDelay - 2)
 ; - spawnOdds = min(45, spawnOdds + 1)
 ; ===================================================================
@@ -207,6 +212,6 @@ main ENDP
 
 
 ; ===================================================================
-; GameOverScreen — print gmae over tesxt, update high score,
-; then await key oress before returning and ExitProcess
+; GameOverScreen — print game over text, update high score,
+; then await key press before returning and ExitProcess
 ; ===================================================================
