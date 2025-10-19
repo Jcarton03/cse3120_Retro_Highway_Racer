@@ -133,11 +133,47 @@ main ENDP
 ; PollInput — read a key if present and adjust player lane.
 ; Uses Irvine ReadKey: ZF=1 if no key was available.
 ; - ESC exits fast program via ExitProcess.
-; - A, a, or Left arrow -> lane - 1 (min 0)
-; - D, d, or Right arrow -> lane + 1 (max LANES-1)
+; - a, or Left arrow -> lane - 1 (min 0)
+; - d, or Right arrow -> lane + 1 (max LANES-1)
+; May want to include up and down controls later, depending on difficulty of game
 ; ===================================================================
 
+PollInput PROC
+; sets ZF = 1 if no input, else ZF = 0, ASCII inputs go to AL, other inputs go to AH
+call ReadKey
+jz NoKeyPressed  ; ZF = 1, no input
+cmp al, 0        ; if AL != 0, then there is ASCII input (important chars, a, d) 
+jne WASD         ; jump to reading ASCII chars
+cmp ah, 4Bh      ; 4Bh refers to Left-arrow, <-
+je MoveLeft      ; jump to controlling the 'car' left
+cmp ah, 4Dh      ; 4Dh refers to Right-arrow, ->
+je MoveRight     ; jump to controlling the 'car' right
+cmp ah, 1Bh      ; 1Bh refers to 'esc'
+je ExitGame      ; jump to where exiting the game is handled
+jmp DoneKey      ; finish taking input and return to game loop
 
+WASD:
+cmp al, 'a'      ; ReadKey puts ASCII chars into AL, checks for 'a'
+je MoveLeft      ; jump to controlling the 'car' left
+cmp al, 'd'      ; checks for 'd'
+je MoveRight     ; jump to controlling the 'car' right
+jmp DoneKey      ; finished taking input and return to game loop
+
+; Jump back to game loop
+NoKeyPressed:
+
+; Shift the 'car' left one lane, lane - 1, make sure it doesn't go beyond a boundary
+MoveLeft:
+
+; Shift the 'car' right one lane, lane + 1, make sure it doesn't go beyond a boundary
+MoveRight:
+
+; Jump back to game loop
+DoneKey:
+
+; Display some text like, "Exiting Retro Racer - Press any key to continue"
+; Jump back to game loop, and carry over a flag or value to immediately exit the game
+ExitGame:
 
 ; ===================================================================
 ; ClearObstacles — sets all active obstacles (obs_active) entries to 0 (no obstacles).
