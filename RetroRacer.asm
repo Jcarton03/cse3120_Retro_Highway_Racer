@@ -87,6 +87,7 @@ main PROC
     ; Main loop runs while player is alive (alive = 1)
 
 GameLoop:
+    ; Check if car position is an obstacle, then alive = 0
     cmp alive, 1
     jne EndGame                 ; Check if player died, leave the loop
 
@@ -125,6 +126,7 @@ main ENDP
 
 ; ===================================================================
 ; InitGame — sets start game state,  UI, colors and clear obstacle lists
+; Set initial lanes as all blank to give player time to feel out the game at the beginning
 ; ===================================================================
 
 
@@ -163,9 +165,11 @@ jmp DoneKey      ; finished taking input and return to game loop
 NoKeyPressed:
 
 ; Shift the 'car' left one lane, lane - 1, make sure it doesn't go beyond a boundary
+; Checks if position moving to is an obstacle then go to GameOver
 MoveLeft:
 
 ; Shift the 'car' right one lane, lane + 1, make sure it doesn't go beyond a boundary
+; Checks if position moving to is an obstacle then go to GameOver
 MoveRight:
 
 ; Jump back to game loop
@@ -177,13 +181,14 @@ ExitGame:
 
 ; ===================================================================
 ; ClearObstacles — sets all active obstacles (obs_active) entries to 0 (no obstacles).
+; Change obstacle in last row to white space, we can have this always be blank
 ; ===================================================================
 
 
 
 ; ===================================================================
 ; SpawnObstacle — pick random #, 0-99 and if pick < spawnOdds, activate a obstacle slot.
-; - Picks first free slot.
+; - Picks first free slot
 ; - Spawns at row 0 in a random lane
 ; ===================================================================
 
@@ -194,8 +199,8 @@ ExitGame:
 ; deactivate/clear when past ROAD_BOTTOM.
 ; Check to ensure a valid path for player 
 ; Example invalid path:
-; |###:   |
-; |   :###|
+; | # :   |
+; |   : # |
 ; ===================================================================
 
 
@@ -203,6 +208,7 @@ ExitGame:
 ; ===================================================================
 ; CheckCollision — if any obstacle is at the players row AND same lane,
 ; set alive = 0(player loses) and updates score/highScore.
+; Check, is obstacle in row above car when next game tick happens, so check then move obstacles
 ; ===================================================================
 
 
@@ -222,13 +228,17 @@ ExitGame:
 
 ; ===================================================================
 ; DrawRoad — draws left/right borders and dotted lane markers, like a highway
+; Example: |   :   :   :   :   :   |
+;          |   :   :   :   :   :   |
+; Should play around with how many lanes are manageable
 ; ===================================================================
 
 
 
 ; ===================================================================
 ; DrawPlayer — print the player icon at the fixed row and current lane 
-; column, updates on moves
+; column, updates on moves, left/right
+; row, when obstacles move down, since lanes don't move, car doesn't move vertically
 ; ===================================================================
 
 
@@ -250,4 +260,5 @@ ExitGame:
 ; ===================================================================
 ; GameOverScreen — print game over text, update high score,
 ; then await key press before returning and ExitProcess
+; have a way to print to a file, read from a file, and compare highscore on the file to last played score
 ; ===================================================================
