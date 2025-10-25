@@ -408,6 +408,18 @@ DO_Next:
     cmp  BYTE PTR [esi], 1
     jne  DO_Skip
 
+    ; row
+    mov  dh, [ebx]
+
+    ; col = laneX[lane]
+    mov  dl, [edi]             ; lane index
+    movzx edx, dl
+    mov  dl, [laneX + edx]
+
+    call Gotoxy
+    mov  al, OB_CHAR
+    call WriteChar
+
     ret
 DrawObstacles ENDP
 
