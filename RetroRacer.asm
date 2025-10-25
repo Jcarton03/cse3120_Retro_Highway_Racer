@@ -385,7 +385,7 @@ DrawPlayer PROC
     mov  al, PLAYER_CHAR
     call WriteChar
 
-
+    pop  edx eax
     ret
 DrawPlayer ENDP
 
