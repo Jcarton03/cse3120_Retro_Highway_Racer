@@ -173,10 +173,17 @@ WASD:
     ; Jump back to game loop
 
 NoKeyPressed:
+    jmp DoneKey
 
 ; Shift the 'car' left one lane, lane - 1, make sure it doesn't go beyond a boundary
 ; Checks if position moving to is an obstacle then go to GameOver
 MoveLeft:
+    mov al, playerLane
+    cmp al, 0
+    jbe DoneKey
+    dec al
+    mov playerLane, al
+    jmp DoneKey
 
 ; Shift the 'car' right one lane, lane + 1, make sure it doesn't go beyond a boundary
 ; Checks if position moving to is an obstacle then go to GameOver
@@ -188,6 +195,7 @@ DoneKey:
 ; Display some text like, "Exiting Retro Racer - Press any key to continue"
 ; Jump back to game loop, and carry over a flag or value to immediately exit the game
 ExitGame:
+
 
 ; ===================================================================
 ; ClearObstacles — sets all active obstacles (obs_active) entries to 0 (no obstacles).
