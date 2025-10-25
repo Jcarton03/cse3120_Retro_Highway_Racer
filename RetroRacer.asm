@@ -295,7 +295,6 @@ CheckCollision PROC
 CheckCollision ENDP
 
 
-
 ; ===================================================================
 ; DrawFrame — clears the screen and draws HUD, road, obstacle, player
 ; ===================================================================
@@ -308,7 +307,6 @@ DrawFrame PROC
     call DrawPlayer
     ret
 DrawFrame ENDP
-
 
 
 ; ===================================================================
