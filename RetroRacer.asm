@@ -161,6 +161,10 @@ InitGame PROC
     shr  al, 1
     mov  marker2Col, al
 
+    call ClearObstacles
+
+    pop  ebx eax
+    ret
 
     ret
 InitGame ENDP
