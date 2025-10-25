@@ -378,6 +378,14 @@ DrawPlayer PROC
     mov  eax, COLOR_ROAD
     call SetTextColor
 
+    mov  dh, PLAYER_ROW
+    movzx eax, playerLane
+    mov  dl, [laneX + eax]
+    call Gotoxy
+    mov  al, PLAYER_CHAR
+    call WriteChar
+
+
     ret
 DrawPlayer ENDP
 
