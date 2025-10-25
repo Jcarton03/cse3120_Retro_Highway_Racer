@@ -333,16 +333,6 @@ DrawRoad ENDP
 ; row, when obstacles move down, since lanes don't move, car doesn't move vertically
 ; ===================================================================
 DrawPlayer PROC
-    ; code...
-    ret
-DrawPlayer ENDP
-
-
-
-; ===================================================================
-; DrawObstacles — print an obstacle for each active obstacle at (row, lane)
-; ===================================================================
-DrawObstacles PROC
     push eax ecx edx
 
     mov  eax, COLOR_ROAD
@@ -385,7 +375,15 @@ DR_NextRow:
 
     pop  edx ecx eax
     ret
+DrawPlayer ENDP
 
+
+
+; ===================================================================
+; DrawObstacles — print an obstacle for each active obstacle at (row, lane)
+; ===================================================================
+DrawObstacles PROC
+    ; code...
     ret
 DrawObstacles ENDP
 
