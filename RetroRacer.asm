@@ -402,11 +402,11 @@ DrawObstacles PROC
     mov  esi, OFFSET obs_active
     mov  edi, OFFSET obs_lane
     mov  ebx, OFFSET obs_row
-    mov  ecx, MAX_OBS
+    mov  ecx, MAX_OBS           ; loop counter # obstacles
 
 DO_Next:
-    cmp  BYTE PTR [esi], 1
-    jne  DO_Skip
+    cmp  BYTE PTR [esi], 1      ; Is obstacle active?
+    jne  DO_Skip                ; If not active, skip drawing
 
     ; row
     mov  dh, [ebx]
@@ -419,6 +419,14 @@ DO_Next:
     call Gotoxy
     mov  al, OB_CHAR
     call WriteChar
+
+DO_Skip:
+    inc  esi        ; move to next obs_active[i+1]
+    inc  edi        ; move to next obs_lane[i+1]
+    inc  ebx        ; move to next obs_row[i+1]
+    loop DO_Next    ; decrement ECX and repeat until ECX = 0
+
+    pop  edi esi edx ecx ebx eax
 
     ret
 DrawObstacles ENDP
