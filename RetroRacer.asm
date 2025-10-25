@@ -106,6 +106,8 @@ GameLoop:
 
     ; If players hits an obstacle, they die.
     call CheckCollision
+    cmp  alive, 1               ; game over immediately on crash
+    jne  EndGame
 
     ; Draw everything for the current frame (HUD + road + player + obstacle)
     call DrawFrame
