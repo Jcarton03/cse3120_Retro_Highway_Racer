@@ -327,9 +327,9 @@ DrawHUD ENDP
 ; Should play around with how many lanes are manageable
 ; ===================================================================
 DrawRoad PROC
-    push eax ecx edx
+    push eax ecx edx        ; registers to modify
 
-    mov  eax, COLOR_ROAD
+    mov  eax, COLOR_ROAD    ; set the color, white on black
     call SetTextColor
 
     ; Draw rows ROAD_TOP --> ROAD_BOTTOM
@@ -338,36 +338,38 @@ DrawRoad PROC
 
 DR_RowLoop:
     ; left border
-    mov  dl, BORDER_LEFT
-    call Gotoxy
-    mov  al, BORDER_CHAR
+    mov  dl, BORDER_LEFT    ; DL = X col position
+    call Gotoxy             ; move cursor to row=DH, col=DL
+    mov  al, BORDER_CHAR    ; AL = '|'
     call WriteChar
 
     ; right border
-    mov  dl, BORDER_RIGHT
+    mov  dl, BORDER_RIGHT   ; right wall column
     call Gotoxy
     mov  al, BORDER_CHAR
     call WriteChar
 
     ; dashed lane markers every other row
     test dh, 1
-    jnz  DR_NextRow
+    jnz  DR_NextRow         ; skip markers on odd rows for dashed effect
 
-    mov  dl, marker1Col
+;    Draw first marker (between lane 1 & lane 2)
+    mov  dl, marker1Col     ; precomputed midpoint column
     call Gotoxy
-    mov  al, LANE_CHAR
+    mov  al, LANE_CHAR      ; AL = ':'
     call WriteChar
 
+    ; Draw second marker (between lane 2 & lane 3)
     mov  dl, marker2Col
     call Gotoxy
     mov  al, LANE_CHAR
     call WriteChar
 
 DR_NextRow:
-    inc  dh
-    loop DR_RowLoop
+    inc  dh                 ; move to next row
+    loop DR_RowLoop         ; ECX--, repeat until 0
 
-    pop  edx ecx eax
+    pop  edx ecx eax        ; restore registers
     ret
 DrawRoad ENDP
 
