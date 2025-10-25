@@ -364,7 +364,20 @@ DR_RowLoop:
     call Gotoxy
     mov  al, BORDER_CHAR
     call WriteChar
-    
+
+    ; dashed lane markers every other row
+    test dh, 1
+    jnz  DR_NextRow
+
+    mov  dl, marker1Col
+    call Gotoxy
+    mov  al, LANE_CHAR
+    call WriteChar
+
+    mov  dl, marker2Col
+    call Gotoxy
+    mov  al, LANE_CHAR
+    call WriteChar
 
     ret
 DrawObstacles ENDP
