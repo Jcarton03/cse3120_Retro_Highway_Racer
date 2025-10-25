@@ -155,6 +155,13 @@ InitGame PROC
     shr  al, 1
     mov  marker1Col, al
 
+    mov  al, [laneX+1]
+    mov  ah, [laneX+2]
+    add  al, ah
+    shr  al, 1
+    mov  marker2Col, al
+
+
     ret
 InitGame ENDP
 
