@@ -141,27 +141,37 @@ main ENDP
 ; ===================================================================
 
 PollInput PROC
-; sets ZF = 1 if no input, else ZF = 0, ASCII inputs go to AL, other inputs go to AH
-call ReadKey
-jz NoKeyPressed  ; ZF = 1, no input
-cmp al, 0        ; if AL != 0, then there is ASCII input (important chars, a, d) 
-jne WASD         ; jump to reading ASCII chars
-cmp ah, 4Bh      ; 4Bh refers to Left-arrow, <-
-je MoveLeft      ; jump to controlling the 'car' left
-cmp ah, 4Dh      ; 4Dh refers to Right-arrow, ->
-je MoveRight     ; jump to controlling the 'car' right
-cmp ah, 1Bh      ; 1Bh refers to 'esc'
-je ExitGame      ; jump to where exiting the game is handled
-jmp DoneKey      ; finish taking input and return to game loop
+    ; sets ZF = 1 if no input, else ZF = 0, ASCII inputs go to AL, other inputs go to AH
+    call ReadKey
+    jz NoKeyPressed  ; ZF = 1, no input
+
+    cmp al, 0        ; if AL != 0, then there is ASCII input (important chars, a, d) 
+    jne WASD         ; jump to reading ASCII chars
+
+    cmp ah, 4Bh      ; 4Bh refers to Left-arrow, <-
+    je MoveLeft      ; jump to controlling the 'car' left
+    cmp ah, 4Dh      ; 4Dh refers to Right-arrow, ->
+    je MoveRight     ; jump to controlling the 'car' right
+    jmp DoneKey      ; finish taking input and return to game loop
 
 WASD:
-cmp al, 'a'      ; ReadKey puts ASCII chars into AL, checks for 'a'
-je MoveLeft      ; jump to controlling the 'car' left
-cmp al, 'd'      ; checks for 'd'
-je MoveRight     ; jump to controlling the 'car' right
-jmp DoneKey      ; finished taking input and return to game loop
 
-; Jump back to game loop
+    cmp ah, 1Bh      ; 1Bh refers to 'esc'
+    je ExitGame      jump to where exiting the game is handled
+
+    cmp al, 'a'      ; ReadKey puts ASCII chars into AL, checks for 'a'
+    je MoveLeft      ; jump to controlling the 'car' left
+    cmp al, 'A'
+    je MoveLeft
+
+    cmp al, 'd'      ; checks for 'd'
+    je MoveRight     ; jump to controlling the 'car' right
+    cmp al, 'D'
+    je MoveRight
+    jmp DoneKey      ; finished taking input and return to game loop
+
+    ; Jump back to game loop
+
 NoKeyPressed:
 
 ; Shift the 'car' left one lane, lane - 1, make sure it doesn't go beyond a boundary
