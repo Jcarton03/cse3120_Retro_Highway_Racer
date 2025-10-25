@@ -373,7 +373,11 @@ DrawRoad ENDP
 ; row, when obstacles move down, since lanes don't move, car doesn't move vertically
 ; ===================================================================
 DrawPlayer PROC
-    ; code...
+    push eax edx
+
+    mov  eax, COLOR_ROAD
+    call SetTextColor
+
     ret
 DrawPlayer ENDP
 
