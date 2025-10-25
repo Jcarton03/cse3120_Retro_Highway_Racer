@@ -134,8 +134,10 @@ main ENDP
 ; InitGame — sets start game state,  UI, colors and clear obstacle lists
 ; Set initial lanes as all blank to give player time to feel out the game at the beginning
 ; ===================================================================
+InitGame PROC
 
-
+    ret
+InitGame ENDP
 
 ; ===================================================================
 ; PollInput — read a key if present and adjust player lane.
