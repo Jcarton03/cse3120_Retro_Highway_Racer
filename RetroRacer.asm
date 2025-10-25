@@ -415,18 +415,20 @@ DO_Next:
     cmp  BYTE PTR [esi], 1      ; Is obstacle active?
     jne  DO_Skip                ; If not active, skip drawing
 
-    ; row
+    ; get screen coords
     mov  dh, [ebx]
 
     ; col = laneX[lane]
-    mov  dl, [edi]             ; lane index
-    movzx edx, dl
-    mov  dl, [laneX + edx]
+    mov  dl, [edi]             ; DL = lane index
+    movzx edx, dl              ; zero-extend to use as offset
+    mov  dl, [laneX + edx]     ; DL = lane center column
+    call Gotoxy                ; move cursor to (row=DH, col=DL)
 
-    call Gotoxy
+    ; draw obs
     mov  al, OB_CHAR
     call WriteChar
 
+; Advance to next obstacle in all arrays, (eahc is a BYTE)
 DO_Skip:
     inc  esi        ; move to next obs_active[i+1]
     inc  edi        ; move to next obs_lane[i+1]
