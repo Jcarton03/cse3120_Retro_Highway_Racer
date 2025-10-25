@@ -146,6 +146,15 @@ InitGame PROC
     mov  tickCount, 0
     mov  rampCounter, 0
 
+    ; compute lane marker midpoints from laneX
+    ; marker1 = (laneX[0] + laneX[1]) / 2
+    ; marker2 = (laneX[1] + laneX[2]) / 2
+    mov  al, [laneX]
+    mov  ah, [laneX+1]
+    add  al, ah
+    shr  al, 1
+    mov  marker1Col, al
+
     ret
 InitGame ENDP
 
