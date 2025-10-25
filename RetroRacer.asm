@@ -322,17 +322,6 @@ DrawHUD ENDP
 ; Should play around with how many lanes are manageable
 ; ===================================================================
 DrawRoad PROC
-    ; code...
-    ret
-DrawRoad ENDP
-
-
-; ===================================================================
-; DrawPlayer — print the player icon at the fixed row and current lane 
-; column, updates on moves, left/right
-; row, when obstacles move down, since lanes don't move, car doesn't move vertically
-; ===================================================================
-DrawPlayer PROC
     push eax ecx edx
 
     mov  eax, COLOR_ROAD
@@ -374,6 +363,17 @@ DR_NextRow:
     loop DR_RowLoop
 
     pop  edx ecx eax
+    ret
+DrawRoad ENDP
+
+
+; ===================================================================
+; DrawPlayer — print the player icon at the fixed row and current lane 
+; column, updates on moves, left/right
+; row, when obstacles move down, since lanes don't move, car doesn't move vertically
+; ===================================================================
+DrawPlayer PROC
+    ; code...
     ret
 DrawPlayer ENDP
 
