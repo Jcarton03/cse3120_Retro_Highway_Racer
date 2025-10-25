@@ -210,8 +210,10 @@ PollInput ENDP
 ; ClearObstacles — sets all active obstacles (obs_active) entries to 0 (no obstacles).
 ; Change obstacle in last row to white space, we can have this always be blank
 ; ===================================================================
-
-
+ClearObstacles PROC
+    mov  ecx, MAX_OBS
+    mov  edi, OFFSET obs_active
+    xor  eax, eax
 
 ; ===================================================================
 ; SpawnObstacle — pick random #, 0-99 and if pick < spawnOdds, activate a obstacle slot.
