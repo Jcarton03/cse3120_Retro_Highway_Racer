@@ -348,9 +348,22 @@ DrawObstacles PROC
     mov  eax, COLOR_ROAD
     call SetTextColor
 
-    ; Draw rows ROAD_TOP..ROAD_BOTTOM
+    ; Draw rows ROAD_TOP --> ROAD_BOTTOM
     mov  ecx, ROAD_BOTTOM - ROAD_TOP + 1
     mov  dh, ROAD_TOP
+
+DR_RowLoop:
+    ; left border
+    mov  dl, BORDER_LEFT
+    call Gotoxy
+    mov  al, BORDER_CHAR
+    call WriteChar
+
+    ; right border
+    mov  dl, BORDER_RIGHT
+    call Gotoxy
+    mov  al, BORDER_CHAR
+    call WriteChar
     
 
     ret
