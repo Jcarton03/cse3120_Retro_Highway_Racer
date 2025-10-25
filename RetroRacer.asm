@@ -390,12 +390,20 @@ DrawPlayer PROC
 DrawPlayer ENDP
 
 
-
 ; ===================================================================
 ; DrawObstacles — print an obstacle for each active obstacle at (row, lane)
 ; ===================================================================
 DrawObstacles PROC
-    ; code...
+    push eax ebx ecx edx esi edi
+
+    mov  eax, COLOR_ROAD
+    call SetTextColor
+
+    mov  esi, OFFSET obs_active
+    mov  edi, OFFSET obs_lane
+    mov  ebx, OFFSET obs_row
+    mov  ecx, MAX_OBS
+
     ret
 DrawObstacles ENDP
 
