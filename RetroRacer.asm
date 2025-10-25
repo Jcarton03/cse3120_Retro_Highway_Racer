@@ -188,6 +188,12 @@ MoveLeft:
 ; Shift the 'car' right one lane, lane + 1, make sure it doesn't go beyond a boundary
 ; Checks if position moving to is an obstacle then go to GameOver
 MoveRight:
+    mov al, playerLane
+    cmp al, (LANES-1)
+    jae DoneKey
+    inc al
+    mov playerLane, al
+    jmp DoneKey
 
 ; Jump back to game loop
 DoneKey:
