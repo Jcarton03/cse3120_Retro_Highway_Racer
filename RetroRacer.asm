@@ -379,6 +379,13 @@ DR_RowLoop:
     mov  al, LANE_CHAR
     call WriteChar
 
+DR_NextRow:
+    inc  dh
+    loop DR_RowLoop
+
+    pop  edx ecx eax
+    ret
+
     ret
 DrawObstacles ENDP
 
