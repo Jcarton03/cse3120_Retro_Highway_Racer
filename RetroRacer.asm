@@ -404,6 +404,10 @@ DrawObstacles PROC
     mov  ebx, OFFSET obs_row
     mov  ecx, MAX_OBS
 
+DO_Next:
+    cmp  BYTE PTR [esi], 1
+    jne  DO_Skip
+
     ret
 DrawObstacles ENDP
 
