@@ -214,6 +214,12 @@ ClearObstacles PROC
     mov  ecx, MAX_OBS
     mov  edi, OFFSET obs_active
     xor  eax, eax
+CLoop:
+    mov  [edi], al
+    inc  edi
+    loop CLoop
+    ret
+ClearObstacles ENDP
 
 ; ===================================================================
 ; SpawnObstacle — pick random #, 0-99 and if pick < spawnOdds, activate a obstacle slot.
