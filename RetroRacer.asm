@@ -385,12 +385,12 @@ DrawPlayer PROC
     mov  eax, COLOR_ROAD
     call SetTextColor
 
-    mov  dh, PLAYER_ROW
-    movzx eax, playerLane
-    mov  dl, [laneX + eax]
-    call Gotoxy
+    mov  dh, PLAYER_ROW     ; DH = player’s fixed row near bottom
+    movzx eax, playerLane   ; EAX = lane index 0,1,2
+    mov  dl, [laneX + eax]  ; DL = column center of that lane
+    call Gotoxy             ; move cursor to PLAYER_ROW, laneX
     mov  al, PLAYER_CHAR
-    call WriteChar
+    call WriteChar          ; print the player car
 
     pop  edx eax
     ret
