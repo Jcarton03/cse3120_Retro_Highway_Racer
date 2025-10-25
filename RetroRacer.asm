@@ -226,7 +226,10 @@ ClearObstacles ENDP
 ; - Picks first free slot
 ; - Spawns at row 0 in a random lane
 ; ===================================================================
-
+SpawnObstacle PROC
+    ; code...
+    ret
+SpawnObstacle ENDP
 
 
 ; ===================================================================
@@ -237,7 +240,10 @@ ClearObstacles ENDP
 ; | # :   |
 ; |   : # |
 ; ===================================================================
-
+UpdateObstacles PROC
+    ; code...
+    ret
+UpdateObstacles ENDP
 
 
 ; ===================================================================
@@ -245,20 +251,30 @@ ClearObstacles ENDP
 ; set alive = 0(player loses) and updates score/highScore.
 ; Check, is obstacle in row above car when next game tick happens, so check then move obstacles
 ; ===================================================================
-
+CheckCollision PROC
+    ; code...
+    ret
+CheckCollision ENDP
 
 
 
 ; ===================================================================
 ; DrawFrame — clears the screen and draws HUD, road, obstacle, player
 ; ===================================================================
+DrawFrame PROC
+    ; code...
+    ret
+DrawFrame ENDP
 
 
 
 ; ===================================================================
 ; DrawHUD — title, controls text, and score/highscore above the game board
 ; ===================================================================
-
+DrawHUD PROC
+    ; code...
+    ret
+DrawHUD ENDP
 
 
 ; ===================================================================
@@ -267,7 +283,10 @@ ClearObstacles ENDP
 ;          |   :   :   :   :   :   |
 ; Should play around with how many lanes are manageable
 ; ===================================================================
-
+DrawRoad PROC
+    ; code...
+    ret
+DrawRoad ENDP
 
 
 ; ===================================================================
@@ -275,13 +294,20 @@ ClearObstacles ENDP
 ; column, updates on moves, left/right
 ; row, when obstacles move down, since lanes don't move, car doesn't move vertically
 ; ===================================================================
+DrawPlayer PROC
+    ; code...
+    ret
+DrawPlayer ENDP
 
 
 
 ; ===================================================================
 ; DrawObstacles — print an obstacle for each active obstacle at (row, lane)
 ; ===================================================================
-
+DrawObstacles PROC
+    ; code...
+    ret
+DrawObstacles ENDP
 
 
 ; ===================================================================
@@ -289,7 +315,10 @@ ClearObstacles ENDP
 ; - tickDelay = max(55, tickDelay - 2)
 ; - spawnOdds = min(45, spawnOdds + 1)
 ; ===================================================================
-
+RampDifficulty PROC
+    ; code...
+    ret
+RampDifficulty ENDP
 
 
 ; ===================================================================
@@ -297,3 +326,9 @@ ClearObstacles ENDP
 ; then await key press before returning and ExitProcess
 ; have a way to print to a file, read from a file, and compare highscore on the file to last played score
 ; ===================================================================
+GameOverScreen PROC
+    ; code...
+    ret
+GameOverScreen ENDP
+
+END main
