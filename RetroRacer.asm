@@ -197,11 +197,14 @@ MoveRight:
 
 ; Jump back to game loop
 DoneKey:
+    ret
 
 ; Display some text like, "Exiting Retro Racer - Press any key to continue"
 ; Jump back to game loop, and carry over a flag or value to immediately exit the game
 ExitGame:
-
+    mov alive, 0
+    ret
+PollInput ENDP
 
 ; ===================================================================
 ; ClearObstacles — sets all active obstacles (obs_active) entries to 0 (no obstacles).
