@@ -33,7 +33,7 @@ COLOR_ROAD      EQU     white + black*16	  ; road text color
 laneX           BYTE    18, 28, 38
 ; Variables for the ASCII character to display the road, obstacles, and car
 PLAYER_CHAR     BYTE     0A4h
-OB_CHAR         BYTE     0FEh
+OB_CHAR         DB	     0FEh
 BORDER_CHAR     BYTE     07Ch
 LANE_CHAR       BYTE     0A6h
 ; lane marker columns, computed at initial from laneX midpoints
@@ -267,10 +267,63 @@ ClearObstacles ENDP
 ; SpawnObstacle — pick random #, 0-99 and if pick < spawnOdds, activate a obstacle slot.
 ; - Picks first free slot
 ; - Spawns at row 0 in a random lane
-; - Obstacle hex (white square ascii) - 0x25A1
+; - Obstacle hex (white square ascii) - 0FEh
 ; ===================================================================
+
 SpawnObstacle PROC
-    ; code...
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
+
+    ; Roll random number 0..99
+    call RandomRange        ; returns 0..RAND_MAX in EAX
+    mov ebx, 100
+    xor edx, edx
+    div ebx                 ; EAX = quotient, EDX = remainder
+    mov al, dl              ; remainder = 0..99
+    cmp al, spawnOdds
+    jae SO_Done             ; if roll >= spawnOdds, don't spawn
+
+    ; Find first free slot
+    mov esi, OFFSET obs_active
+    mov ecx, MAX_OBS
+    xor edi, edi            ; EDI = index
+
+SO_FindSlot:
+    cmp BYTE PTR [esi], 0
+    je SO_Spawn             ; free slot found
+    inc esi
+    inc edi
+    loop SO_FindSlot
+    jmp SO_Done             ; no free slot, skip spawning
+
+SO_Spawn:
+    ; Mark obstacle active
+    mov al, 1
+    mov [esi], al
+
+    ; Pick random lane 0..LANES-1
+    call RandomRange        ; returns 0..RAND_MAX
+    mov ebx, LANES
+    xor edx, edx
+    div ebx                 ; EAX = quotient, EDX = remainder
+    mov al, dl
+    mov [obs_lane + edi], al
+
+    ; Set row = ROAD_TOP
+    mov al, ROAD_TOP
+    mov [obs_row + edi], al
+
+SO_Done:
+    pop edi
+    pop esi
+    pop edx
+    pop ecx
+    pop ebx
+    pop eax
     ret
 SpawnObstacle ENDP
 
@@ -283,18 +336,91 @@ SpawnObstacle ENDP
 ; │ ■ ¦   │             ; tested on terminal, vertical lines connect and 
 ; │   ¦ ■ │             ; lane markers are evenly spaced, all characters work
 ; ===================================================================
+
 UpdateObstacles PROC
-    ; code...
+    push eax
+    push ecx
+    push edx
+    push esi
+    push edi
+
+    mov esi, OFFSET obs_active
+    mov edi, OFFSET obs_row
+    mov ecx, MAX_OBS
+
+NextObs:
+    cmp BYTE PTR [esi], 1        ; only update active obstacles
+    jne SkipObs
+
+    ; increment row by 1
+    mov al, [edi]
+    inc al
+    mov [edi], al
+
+    ; check if past ROAD_BOTTOM
+    cmp al, ROAD_BOTTOM
+    jle SkipObs
+    ; deactivate obstacle
+    mov BYTE PTR [esi], 0
+    mov BYTE PTR [edi], 0        ; reset row just for cleanliness
+
+SkipObs:
+    inc esi
+    inc edi
+    loop NextObs
+
+    pop edi
+    pop esi
+    pop edx
+    pop ecx
+    pop eax
     ret
 UpdateObstacles ENDP
-
 
 ; ===================================================================
 ; CheckCollision — if any obstacle is at the players row AND same lane,
 ; set alive = 0(player loses) and updates score/highScore.
 ; ===================================================================
 CheckCollision PROC
-    ; code...
+    push eax
+    push ecx
+    push edx
+    push esi
+    push edi
+
+    mov esi, OFFSET obs_active
+    mov edi, OFFSET obs_lane
+    mov edx, OFFSET obs_row
+    mov ecx, MAX_OBS
+
+CheckNext:
+    cmp BYTE PTR [esi], 1        ; only active obstacles
+    jne SkipCheck
+
+    ; compare row with player
+    mov al, [edx]
+    cmp al, PLAYER_ROW
+    jne SkipCheck
+
+    ; compare lane with playerLane
+    mov al, [edi]
+    cmp al, playerLane
+    jne SkipCheck
+
+    ; collision detected
+    mov alive, 0
+
+SkipCheck:
+    inc esi
+    inc edi
+    inc edx
+    loop CheckNext
+
+    pop edi
+    pop esi
+    pop edx
+    pop ecx
+    pop eax
     ret
 CheckCollision ENDP
 
@@ -458,6 +584,7 @@ DrawObstacles PROC
     mov  ebx, OFFSET obs_row
     mov  ecx, MAX_OBS           ; loop counter # obstacles
 
+
 DO_Next:
     cmp  BYTE PTR [esi], 1      ; Is obstacle active?
     jne  DO_Skip                ; If not active, skip drawing
@@ -498,10 +625,46 @@ DrawObstacles ENDP
 ; - tickDelay = max(55, tickDelay - 2)
 ; - spawnOdds = min(45, spawnOdds + 1)
 ; ===================================================================
+
 RampDifficulty PROC
-    ; code...
+    push eax
+    push ecx
+    push edx
+
+    ; increment ramp counter
+    inc rampCounter
+
+    ; every 80 ticks, adjust speed & spawn odds
+    mov eax, rampCounter
+    mov ecx, 80
+    cdq
+    div ecx          ; EAX = rampCounter / 80, EDX = remainder
+    cmp edx, 0
+    jne RD_Done      ; not yet 80 ticks, skip
+
+    ; decrease tickDelay by 2 (min 20)
+    movzx eax, tickDelay
+    cmp eax, 22
+    jl RD_SkipSpeed
+    sub eax, 2
+    mov tickDelay, ax
+RD_SkipSpeed:
+
+    ; increase spawnOdds by 1 (max 80)
+    mov al, spawnOdds
+    cmp al, 80
+    jae RD_SkipSpawn
+    inc al
+    mov spawnOdds, al
+RD_SkipSpawn:
+
+RD_Done:
+    pop edx
+    pop ecx
+    pop eax
     ret
 RampDifficulty ENDP
+
 
 
 ; ===================================================================
