@@ -522,6 +522,11 @@ GOS_Display:
     mov  eax, score
     call WriteDec
 
+    ; wait for any key
+    call ReadChar
+
+    pop  edx eax
+
     ret
 GameOverScreen ENDP
 
