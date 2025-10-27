@@ -24,11 +24,6 @@ ROAD_TOP        EQU     2           ; first highway row
 ROAD_BOTTOM     EQU     23          ; last highway row
 PLAYER_ROW      EQU     ROAD_BOTTOM-1 ; where the car sits (second line from the bottom, might want higher, or the ability to go up and down)
 
-;PLAYER_CHAR     EQU     0xCF         ; player glyph, was '^'
-;OB_CHAR         EQU     0xFE         ; obstacle glyph, was '#'
-;BORDER_CHAR     EQU     0xB3         ; border glyph, was '|', is different length, better connected on terminal
-;LANE_CHAR       EQU     0xA6         ; lane marker glyph, '║' also an option, but a little too much
-
 COLOR_HUD       EQU     yellow                 ; HUD text color on black background
 COLOR_ROAD      EQU     white + black*16	  ; road text color 
 
@@ -36,6 +31,7 @@ COLOR_ROAD      EQU     white + black*16	  ; road text color
 .data
 ; Column centers for each lane (Modify to make wider/narrower)
 laneX           BYTE    18, 28, 38
+; Variables for the ASCII character to display the road, obstacles, and car
 PLAYER_CHAR     BYTE     0A4h
 OB_CHAR         BYTE     0FEh
 BORDER_CHAR     BYTE     07Ch
