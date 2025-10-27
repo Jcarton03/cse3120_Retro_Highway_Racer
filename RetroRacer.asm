@@ -493,7 +493,15 @@ RampDifficulty ENDP
 ; have a way to print to a file, read from a file, and compare highscore on the file to last played score
 ; ===================================================================
 GameOverScreen PROC
-    ; code...
+    push eax edx
+
+    ; highScore = max(highScore, score)
+    mov  eax, highScore
+    cmp  eax, score
+    jae  GOS_Show
+    mov  eax, score
+    mov  highScore, eax
+    
     ret
 GameOverScreen ENDP
 
