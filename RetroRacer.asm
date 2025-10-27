@@ -513,6 +513,15 @@ GOS_Display:
     mov  edx, OFFSET gameOverStr
     call WriteString
 
+    ; print final score below
+    mov  dh, 14
+    mov  dl, 10
+    call Gotoxy
+    mov  edx, OFFSET scoreStr
+    call WriteString
+    mov  eax, score
+    call WriteDec
+
     ret
 GameOverScreen ENDP
 
