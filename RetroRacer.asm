@@ -332,6 +332,15 @@ DrawHUD PROC
     mov  edx, OFFSET controlsStr
     call WriteString
 
+    ; Score (row 0, right-ish)
+    mov  dh, 0
+    mov  dl, 55
+    call Gotoxy
+    mov  edx, OFFSET scoreStr
+    call WriteString
+    mov  eax, score
+    call WriteDec
+
     ret
 DrawHUD ENDP
 
