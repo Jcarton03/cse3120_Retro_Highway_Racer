@@ -13,7 +13,20 @@ Using mainly MASM, the goal is to make a top-down ASCII retro highway racing gam
 **Controls**
 - Left Arrow: Move one lane left
 - Right Arrow: Move one lane right
-- Esc: Quit
+- Esc: X
+
+**Running Intructions**
+- Download the GitHub
+- Open the correct Project32_VS for your version of Visual Studio
+- Copy the .asm file and paste it into the project folder
+- Add existing file to the now open project
+- Build the .asm file
+- Open the project folder and open the Debug folder
+- Copy its path
+- Open Windows Command Prompt
+- Change directory to the copied path (cd ../Debug)
+- Input the command: chcp 1252 (this allows certain characters to show up)
+- Then run the .exe file by using the command: Project.exe
 
 **Credits**
 - Team: Jacob Carton & Matthew Goembel
