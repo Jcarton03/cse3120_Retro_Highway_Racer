@@ -498,10 +498,21 @@ GameOverScreen PROC
     ; highScore = max(highScore, score)
     mov  eax, highScore
     cmp  eax, score
-    jae  GOS_Show
+    jae  GOS_Display
     mov  eax, score
     mov  highScore, eax
-    
+
+GOS_Display:
+    mov  eax, COLOR_HUD
+    call SetTextColor
+
+    ; center-ish message
+    mov  dh, 12
+    mov  dl, 10
+    call Gotoxy
+    mov  edx, OFFSET gameOverStr
+    call WriteString
+
     ret
 GameOverScreen ENDP
 
