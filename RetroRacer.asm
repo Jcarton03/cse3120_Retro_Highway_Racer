@@ -318,6 +318,13 @@ DrawHUD PROC
     mov  eax, COLOR_HUD
     call SetTextColor
 
+    ; Title (row 0, col 0)
+    mov  dh, 0
+    mov  dl, 0
+    call Gotoxy
+    mov  edx, OFFSET titleStr
+    call WriteString
+
     ret
 DrawHUD ENDP
 
