@@ -341,6 +341,16 @@ DrawHUD PROC
     mov  eax, score
     call WriteDec
 
+    ; High Score (row 1, right-ish)
+    mov  dh, 1
+    mov  dl, 55
+    call Gotoxy
+    mov  edx, OFFSET highscoreStr
+    call WriteString
+    mov  eax, highScore
+    call WriteDec
+
+    pop  edx eax
     ret
 DrawHUD ENDP
 
