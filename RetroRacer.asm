@@ -24,10 +24,10 @@ ROAD_TOP        EQU     2           ; first highway row
 ROAD_BOTTOM     EQU     23          ; last highway row
 PLAYER_ROW      EQU     (ROAD_BOTTOM-1) ; where the car sits (second line from the bottom, might want higher, or the ability to go up and down)
 
-PLAYER_CHAR     EQU     '^'         ; player glyph
-OB_CHAR         EQU     '#'         ; obstacle glyph
-BORDER_CHAR     EQU     '|'         ; border glyph
-LANE_CHAR       EQU     ':'         ; lane marker glyph
+PLAYER_CHAR     EQU     '¤'         ; player glyph, was '^'
+OB_CHAR         EQU     '■'         ; obstacle glyph, was '#'
+BORDER_CHAR     EQU     '│'         ; border glyph, was '|', is different length, better connected on terminal
+LANE_CHAR       EQU     '¦'         ; lane marker glyph, '║' also an option, but a little too much
 
 COLOR_HUD       EQU     (yellow)                 ; HUD text color on black background
 COLOR_ROAD      EQU     (white + (black*16))     ; road text color 
@@ -195,7 +195,7 @@ PollInput PROC
 WASD:
 
     cmp ah, 1Bh      ; 1Bh refers to 'esc'
-    je ExitGame      jump to where exiting the game is handled
+    je ExitGame      ; jump to where exiting the game is handled
 
     cmp al, 'a'      ; ReadKey puts ASCII chars into AL, checks for 'a'
     je MoveLeft      ; jump to controlling the 'car' left
@@ -263,6 +263,7 @@ ClearObstacles ENDP
 ; SpawnObstacle — pick random #, 0-99 and if pick < spawnOdds, activate a obstacle slot.
 ; - Picks first free slot
 ; - Spawns at row 0 in a random lane
+; - Obstacle hex (white square ascii) - 0x25A1
 ; ===================================================================
 SpawnObstacle PROC
     ; code...
@@ -275,8 +276,8 @@ SpawnObstacle ENDP
 ; deactivate/clear when past ROAD_BOTTOM.
 ; Check to ensure a valid path for player 
 ; Example invalid path:
-; | # :   |
-; |   : # |
+; │ ■ ¦   │             ; tested on terminal, vertical lines connect and 
+; │   ¦ ■ │             ; lane markers are evenly spaced, all characters work
 ; ===================================================================
 UpdateObstacles PROC
     ; code...
@@ -287,7 +288,6 @@ UpdateObstacles ENDP
 ; ===================================================================
 ; CheckCollision — if any obstacle is at the players row AND same lane,
 ; set alive = 0(player loses) and updates score/highScore.
-; Check, is obstacle in row above car when next game tick happens, so check then move obstacles
 ; ===================================================================
 CheckCollision PROC
     ; code...
@@ -357,13 +357,13 @@ DrawHUD ENDP
 
 ; ===================================================================
 ; DrawRoad — draws left/right borders and dotted lane markers, like a highway
-; Example: |   :   :   :   :   :   |
-;          |   :   :   :   :   :   |
+; Example: |   ¦   |
+;          |   ¦   |
 ; Should play around with how many lanes are manageable
 ; ===================================================================
 DrawRoad PROC
     push eax ecx edx        ; registers to modify
-
+    
     mov  eax, COLOR_ROAD    ; set the color, white on black
     call SetTextColor
 
@@ -375,7 +375,7 @@ DR_RowLoop:
     ; left border
     mov  dl, BORDER_LEFT    ; DL = X col position
     call Gotoxy             ; move cursor to row=DH, col=DL
-    mov  al, BORDER_CHAR    ; AL = '|'
+    mov  al, BORDER_CHAR    ; AL = '│'
     call WriteChar
 
     ; right border
@@ -384,14 +384,13 @@ DR_RowLoop:
     mov  al, BORDER_CHAR
     call WriteChar
 
-    ; dashed lane markers every other row
-    test dh, 1
-    jnz  DR_NextRow         ; skip markers on odd rows for dashed effect
+    ; dashed lane markers every row, new character looks cleaner
+    jmp  DR_NextRow         
 
-;    Draw first marker (between lane 1 & lane 2)
+    ; Draw first marker (between lane 1 & lane 2)
     mov  dl, marker1Col     ; precomputed midpoint column
     call Gotoxy
-    mov  al, LANE_CHAR      ; AL = ':'
+    mov  al, LANE_CHAR      ; AL = '¦'
     call WriteChar
 
     ; Draw second marker (between lane 2 & lane 3)
@@ -463,7 +462,7 @@ DO_Next:
     mov  al, OB_CHAR
     call WriteChar
 
-; Advance to next obstacle in all arrays, (eahc is a BYTE)
+; Advance to next obstacle in all arrays, (each is a BYTE)
 DO_Skip:
     inc  esi        ; move to next obs_active[i+1]
     inc  edi        ; move to next obs_lane[i+1]
