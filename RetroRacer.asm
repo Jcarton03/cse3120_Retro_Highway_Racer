@@ -584,25 +584,22 @@ DrawObstacles PROC
     mov  ebx, OFFSET obs_row
     mov  ecx, MAX_OBS           ; loop counter # obstacles
 
-
 DO_Next:
     cmp  BYTE PTR [esi], 1      ; Is obstacle active?
     jne  DO_Skip                ; If not active, skip drawing
 
-    ; get screen coords
-    mov  dh, [ebx]
+    ; get screen row
+    mov  dh, [ebx]              ; DH = obstacle row
 
-    ; col = laneX[lane]
-    mov  dl, [edi]             ; DL = lane index
-    movzx edx, dl              ; zero-extend to use as offset
-    mov  dl, [laneX + edx]     ; DL = lane center column
+    ; get lane index and convert to column
+    mov  al, [edi]              ; AL = lane index
+    movzx eax, al               ; zero-extend to EAX
+    mov  dl, [laneX + eax]      ; DL = column center of that lane
+
     call Gotoxy                ; move cursor to (row=DH, col=DL)
-
-    ; draw obs
     mov  al, OB_CHAR
     call WriteChar
 
-; Advance to next obstacle in all arrays, (each is a BYTE)
 DO_Skip:
     inc  esi        ; move to next obs_active[i+1]
     inc  edi        ; move to next obs_lane[i+1]
@@ -618,6 +615,7 @@ DO_Skip:
 
     ret
 DrawObstacles ENDP
+
 
 
 ; ===================================================================
