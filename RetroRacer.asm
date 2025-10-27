@@ -22,21 +22,24 @@ BORDER_LEFT     EQU     12          ; left wall x-position, (col)
 BORDER_RIGHT    EQU     44          ; right wall x-position, (row)
 ROAD_TOP        EQU     2           ; first highway row
 ROAD_BOTTOM     EQU     23          ; last highway row
-PLAYER_ROW      EQU     (ROAD_BOTTOM-1) ; where the car sits (second line from the bottom, might want higher, or the ability to go up and down)
+PLAYER_ROW      EQU     ROAD_BOTTOM-1 ; where the car sits (second line from the bottom, might want higher, or the ability to go up and down)
 
-PLAYER_CHAR     EQU     '¤'         ; player glyph, was '^'
-OB_CHAR         EQU     '■'         ; obstacle glyph, was '#'
-BORDER_CHAR     EQU     '│'         ; border glyph, was '|', is different length, better connected on terminal
-LANE_CHAR       EQU     '¦'         ; lane marker glyph, '║' also an option, but a little too much
+;PLAYER_CHAR     EQU     0xCF         ; player glyph, was '^'
+;OB_CHAR         EQU     0xFE         ; obstacle glyph, was '#'
+;BORDER_CHAR     EQU     0xB3         ; border glyph, was '|', is different length, better connected on terminal
+;LANE_CHAR       EQU     0xA6         ; lane marker glyph, '║' also an option, but a little too much
 
-COLOR_HUD       EQU     (yellow)                 ; HUD text color on black background
-COLOR_ROAD      EQU     (white + (black*16))     ; road text color 
+COLOR_HUD       EQU     yellow                 ; HUD text color on black background
+COLOR_ROAD      EQU     white + black*16	  ; road text color 
 
 ; ======================= DATA =======================
 .data
 ; Column centers for each lane (Modify to make wider/narrower)
 laneX           BYTE    18, 28, 38
-
+PLAYER_CHAR     BYTE     0A4h
+OB_CHAR         BYTE     0FEh
+BORDER_CHAR     BYTE     07Ch
+LANE_CHAR       BYTE     0A6h
 ; lane marker columns, computed at initial from laneX midpoints
 marker1Col      BYTE    23
 marker2Col      BYTE    33
@@ -48,10 +51,11 @@ score           DWORD   0               ;
 highScore       DWORD   0               ; run per session
 
 ; Game timing & difficulty, can modify later
-tickDelay       WORD    120             ; The ms per frame, for speeding down/up
+tickDelay       WORD    60              ; The ms per frame, for speeding down/up
 spawnOdds       BYTE    14              ; percentage (0..100). Spawn if roll < spawnOdds
 tickCount       DWORD   0               ; tracks frames to know when to speed up/increase difficulty
-obstacleRamp    DWORD   25000           ; amount of time required to increase the number of maximum lanes with obstacles 
+obstacleRamp    DWORD   25000           ; amount of time required to increase the number of maximum lanes with obstacles  
+rampCounter	 DWORD   0
 
 ; Obstacles are arrays [0..2] for simplicity:
 obs_active      BYTE    MAX_OBS DUP(0)  ; 1 if in use, clears after user dodges
@@ -60,9 +64,9 @@ obs_row         BYTE    MAX_OBS DUP(0)  ; obstacle -> current row (0..ROAD_BOTTO
 
 ; Game HUD/UI strings
 titleStr        BYTE    "RETRO HIGHWAY RACER",0
-controlsStr         BYTE    "A/D or <-/-> to move, and ESC to quit",0
+controlsStr     BYTE    "A/D or <-/-> to move, and X to quit",0
 scoreStr        BYTE    "Score: ",0
-highscoreStr           BYTE    "High Score: ",0
+highscoreStr    BYTE    "High Score: ",0
 gameOverStr     BYTE    "GAME OVER! Press any key to continue...",0
 
 ; ======================= PROTOTYPES =======================
@@ -136,7 +140,8 @@ main ENDP
 ; ===================================================================
 InitGame PROC
 
-    push eax ebx
+    push eax
+    push ebx
 
     call Randomize
     call Clrscr
@@ -163,7 +168,8 @@ InitGame PROC
 
     call ClearObstacles
 
-    pop  ebx eax
+    pop ebx
+    pop eax
     ret
 
     ret
@@ -172,7 +178,7 @@ InitGame ENDP
 ; ===================================================================
 ; PollInput — read a key if present and adjust player lane.
 ; Uses Irvine ReadKey: ZF=1 if no key was available.
-; - ESC exits fast program via ExitProcess.
+; - 'X' exits fast program via ExitProcess.
 ; - a, or Left arrow -> lane - 1 (min 0)
 ; - d, or Right arrow -> lane + 1 (max LANES-1)
 ; May want to include up and down controls later, depending on difficulty of game
@@ -194,8 +200,10 @@ PollInput PROC
 
 WASD:
 
-    cmp ah, 1Bh      ; 1Bh refers to 'esc'
+    cmp al, 'x'      ; 1Bh refers to 'esc'
     je ExitGame      ; jump to where exiting the game is handled
+    cmp al, 'X'
+    je ExitGame
 
     cmp al, 'a'      ; ReadKey puts ASCII chars into AL, checks for 'a'
     je MoveLeft      ; jump to controlling the 'car' left
@@ -240,7 +248,7 @@ DoneKey:
 ; Display some text like, "Exiting Retro Racer - Press any key to continue"
 ; Jump back to game loop, and carry over a flag or value to immediately exit the game
 ExitGame:
-    mov alive, 0
+    call GameOverScreen
     ret
 PollInput ENDP
 
@@ -299,7 +307,6 @@ CheckCollision ENDP
 ; DrawFrame — clears the screen and draws HUD, road, obstacle, player
 ; ===================================================================
 DrawFrame PROC
-    DrawFrame PROC
     call Clrscr
     call DrawHUD
     call DrawRoad
@@ -313,7 +320,8 @@ DrawFrame ENDP
 ; DrawHUD — title, controls text, and score/highscore above the game board
 ; ===================================================================
 DrawHUD PROC
-    push eax edx
+    push eax
+    push edx
 
     mov  eax, COLOR_HUD
     call SetTextColor
@@ -350,7 +358,8 @@ DrawHUD PROC
     mov  eax, highScore
     call WriteDec
 
-    pop  edx eax
+    pop edx
+    pop eax
     ret
 DrawHUD ENDP
 
@@ -362,7 +371,9 @@ DrawHUD ENDP
 ; Should play around with how many lanes are manageable
 ; ===================================================================
 DrawRoad PROC
-    push eax ecx edx        ; registers to modify
+    push eax
+    push ecx
+    push edx        ; registers to modify
     
     mov  eax, COLOR_ROAD    ; set the color, white on black
     call SetTextColor
@@ -382,10 +393,7 @@ DR_RowLoop:
     mov  dl, BORDER_RIGHT   ; right wall column
     call Gotoxy
     mov  al, BORDER_CHAR
-    call WriteChar
-
-    ; dashed lane markers every row, new character looks cleaner
-    jmp  DR_NextRow         
+    call WriteChar         
 
     ; Draw first marker (between lane 1 & lane 2)
     mov  dl, marker1Col     ; precomputed midpoint column
@@ -403,7 +411,9 @@ DR_NextRow:
     inc  dh                 ; move to next row
     loop DR_RowLoop         ; ECX--, repeat until 0
 
-    pop  edx ecx eax        ; restore registers
+    pop edx 
+    pop ecx
+    pop eax        ; restore registers
     ret
 DrawRoad ENDP
 
@@ -414,7 +424,8 @@ DrawRoad ENDP
 ; row, when obstacles move down, since lanes don't move, car doesn't move vertically
 ; ===================================================================
 DrawPlayer PROC
-    push eax edx
+    push eax
+    push edx
 
     mov  eax, COLOR_ROAD
     call SetTextColor
@@ -426,7 +437,8 @@ DrawPlayer PROC
     mov  al, PLAYER_CHAR
     call WriteChar          ; print the player car
 
-    pop  edx eax
+    pop edx
+    pop eax
     ret
 DrawPlayer ENDP
 
@@ -435,7 +447,12 @@ DrawPlayer ENDP
 ; DrawObstacles — print an obstacle for each active obstacle at (row, lane)
 ; ===================================================================
 DrawObstacles PROC
-    push eax ebx ecx edx esi edi
+    push eax
+    push ebx 
+    push ecx 
+    push edx
+    push esi
+    push edi
 
     mov  eax, COLOR_ROAD
     call SetTextColor
@@ -469,7 +486,12 @@ DO_Skip:
     inc  ebx        ; move to next obs_row[i+1]
     loop DO_Next    ; decrement ECX and repeat until ECX = 0
 
-    pop  edi esi edx ecx ebx eax
+    pop edi
+    pop esi
+    pop edx 
+    pop ecx
+    pop ebx
+    pop eax
 
     ret
 DrawObstacles ENDP
@@ -492,7 +514,8 @@ RampDifficulty ENDP
 ; have a way to print to a file, read from a file, and compare highscore on the file to last played score
 ; ===================================================================
 GameOverScreen PROC
-    push eax edx
+    push eax
+    push edx
 
     ; highScore = max(highScore, score)
     mov  eax, highScore
@@ -524,9 +547,11 @@ GOS_Display:
     ; wait for any key
     call ReadChar
 
-    pop  edx eax
+    pop edx
+    pop eax
 
     ret
 GameOverScreen ENDP
+
 
 END main
