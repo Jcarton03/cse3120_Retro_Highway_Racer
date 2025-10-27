@@ -313,7 +313,11 @@ DrawFrame ENDP
 ; DrawHUD — title, controls text, and score/highscore above the game board
 ; ===================================================================
 DrawHUD PROC
-    ; code...
+    push eax edx
+
+    mov  eax, COLOR_HUD
+    call SetTextColor
+
     ret
 DrawHUD ENDP
 
