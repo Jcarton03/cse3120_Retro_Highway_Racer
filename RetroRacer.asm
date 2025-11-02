@@ -271,6 +271,7 @@ ClearObstacles ENDP
 ; ===================================================================
 
 SpawnObstacle PROC
+    ; Save registers that we modify
     push eax
     push ebx
     push ecx
@@ -278,53 +279,47 @@ SpawnObstacle PROC
     push esi
     push edi
 
-    ; Roll random number 0..99
-    call RandomRange        ; returns 0..RAND_MAX in EAX
-    mov ebx, 100
-    xor edx, edx
-    div ebx                 ; EAX = quotient, EDX = remainder
-    mov al, dl              ; remainder = 0..99
-    cmp al, spawnOdds
-    jae SO_Done             ; if roll >= spawnOdds, don't spawn
+    ; ---- - roll 0..99 and compare to spawnOdds---- -
+    mov  eax, 100       ; range
+    call RandomRange    ; EAX = 0..99
+    cmp  al, spawnOdds
+    jae  SO_Done        ; if roll >= spawnOdds, don't spawn
 
-    ; Find first free slot
-    mov esi, OFFSET obs_active
-    mov ecx, MAX_OBS
-    xor edi, edi            ; EDI = index
+    ; ---- - find first free slot---- -
+    mov  esi, OFFSET obs_active
+    mov  ecx, MAX_OBS   ; # of obstacles to check
+    xor edi, edi        ; edi = index
 
-SO_FindSlot:
-    cmp BYTE PTR [esi], 0
-    je SO_Spawn             ; free slot found
-    inc esi
-    inc edi
-    loop SO_FindSlot
-    jmp SO_Done             ; no free slot, skip spawning
+SO_FindSlot :
+    cmp  BYTE PTR[esi], 0   ; is space free
+    je   SO_Spawn           ; else go next entry
+    inc  esi
+    inc  edi                ; inc index counter
+    loop SO_FindSlot        ; dec ecx and loop till 0
+    jmp  SO_Done            ; stop spawning if no free slot
 
-SO_Spawn:
-    ; Mark obstacle active
-    mov al, 1
-    mov [esi], al
+; mark activate the obstacle
+SO_Spawn :
+mov  BYTE PTR[esi], 1   ; mark active
 
-    ; Pick random lane 0..LANES-1
-    call RandomRange        ; returns 0..RAND_MAX
-    mov ebx, LANES
-    xor edx, edx
-    div ebx                 ; EAX = quotient, EDX = remainder
-    mov al, dl
-    mov [obs_lane + edi], al
+; ---- - pick lane 0..LANES - 1 ---- -
+mov  eax, LANES         ; range
+call RandomRange        ; EAX = 0..LANES - 1
+mov[obs_lane + edi], al
 
-    ; Set row = ROAD_TOP
-    mov al, ROAD_TOP
-    mov [obs_row + edi], al
+; ---- - start at top row---- -
+mov  al, ROAD_TOP
+mov[obs_row + edi], al  ; store in obs_row array
 
-SO_Done:
-    pop edi
-    pop esi
-    pop edx
-    pop ecx
-    pop ebx
-    pop eax
-    ret
+; reg cleanup
+SO_Done :
+pop  edi
+pop  esi
+pop  edx
+pop  ecx
+pop  ebx
+pop  eax
+ret
 SpawnObstacle ENDP
 
 
