@@ -15,7 +15,7 @@ ExitProcess PROTO, dwExitCode:DWORD
 INCLUDE Irvine32.inc
 
 ; ======================= Constants =========================
-LANES           EQU     3           ; # of lanes (Need for flushing out a lane, |  :  |, |#:^|, | # : ^ |, ect)
+LANES           EQU     3           ; # of lanes
 MAX_OBS         EQU     32          ; max active obstacles tracked at once
 
 BORDER_LEFT     EQU     12          ; left wall x-position, (col)
@@ -24,8 +24,11 @@ ROAD_TOP        EQU     2           ; first highway row
 ROAD_BOTTOM     EQU     23          ; last highway row
 PLAYER_ROW      EQU     ROAD_BOTTOM-1 ; where the car sits (second line from the bottom, might want higher, or the ability to go up and down)
 
-COLOR_HUD       EQU     yellow                 ; HUD text color on black background
+COLOR_HUD       EQU     green + black*16       ; HUD text color on black background
 COLOR_ROAD      EQU     white + black*16	  ; road text color 
+COLOR_LANE	 EQU     yellow + black*16	  ; lane divide color
+COLOR_CAR		 EQU	    lightRed + black*16		  ; car text color
+COLOR_OBS		 EQU	    red + lightGray*16 ; obstacle text color
 
 ; ======================= DATA =======================
 .data
@@ -33,7 +36,7 @@ COLOR_ROAD      EQU     white + black*16	  ; road text color
 laneX           BYTE    18, 28, 38
 ; Variables for the ASCII character to display the road, obstacles, and car
 PLAYER_CHAR     BYTE     0A4h
-OB_CHAR         DB	     0FEh
+OB_CHAR         BYTE	058h     
 BORDER_CHAR     BYTE     07Ch
 LANE_CHAR       BYTE     0A6h
 ; lane marker columns, computed at initial from laneX midpoints
@@ -168,6 +171,7 @@ InitGame PROC
     pop eax
     ret
 
+    ret
 InitGame ENDP
 
 ; ===================================================================
@@ -466,13 +470,13 @@ DrawHUD PROC
     call WriteDec
 
     ; High Score (row 1, right-ish)
-    mov  dh, 1
-    mov  dl, 55
-    call Gotoxy
-    mov  edx, OFFSET highscoreStr
-    call WriteString
-    mov  eax, highScore
-    call WriteDec
+    ;mov  dh, 1
+    ;mov  dl, 55
+    ;call Gotoxy
+    ;mov  edx, OFFSET highscoreStr
+    ;call WriteString
+    ;mov  eax, highScore
+    ;call WriteDec
 
     pop edx
     pop eax
@@ -514,6 +518,8 @@ DR_RowLoop:
     ; Draw first marker (between lane 1 & lane 2)
     mov  dl, marker1Col     ; precomputed midpoint column
     call Gotoxy
+    mov eax, COLOR_LANE
+    call SetTextColor
     mov  al, LANE_CHAR      ; AL = '¦'
     call WriteChar
 
@@ -522,6 +528,8 @@ DR_RowLoop:
     call Gotoxy
     mov  al, LANE_CHAR
     call WriteChar
+    mov eax, COLOR_ROAD
+    call SetTextColor
 
 DR_NextRow:
     inc  dh                 ; move to next row
@@ -550,6 +558,8 @@ DrawPlayer PROC
     movzx eax, playerLane   ; EAX = lane index 0,1,2
     mov  dl, [laneX + eax]  ; DL = column center of that lane
     call Gotoxy             ; move cursor to PLAYER_ROW, laneX
+    mov eax, COLOR_CAR
+    call SetTextColor
     mov  al, PLAYER_CHAR
     call WriteChar          ; print the player car
 
@@ -591,8 +601,12 @@ DO_Next:
     mov  dl, [laneX + eax]      ; DL = column center of that lane
 
     call Gotoxy                ; move cursor to (row=DH, col=DL)
+    mov eax, COLOR_OBS
+    call SetTextColor
     mov  al, OB_CHAR
     call WriteChar
+    mov eax, COLOR_ROAD
+    call SetTextColor
 
 DO_Skip:
     inc  esi        ; move to next obs_active[i+1]
@@ -697,6 +711,9 @@ GOS_Display:
 
     ; wait for any key
     call ReadChar
+    mov eax, COLOR_ROAD
+    call SetTextColor
+    call Clrscr
 
     pop edx
     pop eax
