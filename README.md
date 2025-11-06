@@ -33,9 +33,6 @@ Using mainly MASM, the goal is to make a top-down ASCII retro highway racing gam
 - Instructor: Dr. Silaghi
 - Libraries: Irvine32
 
-**Screenshot**
-![Screenshot](screenshot.png)
-
-## 🎮 Gameplay Preview
+**🎮 Gameplay Preview**
 
 ![Retro Racer Gameplay](RACERMASM.gif)
