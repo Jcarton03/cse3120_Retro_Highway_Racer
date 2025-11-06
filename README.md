@@ -35,3 +35,7 @@ Using mainly MASM, the goal is to make a top-down ASCII retro highway racing gam
 
 **Screenshot**
 ![Screenshot](screenshot.png)
+
+## 🎮 Gameplay Preview
+
+![Retro Racer Gameplay](RACERMASM.gif)
