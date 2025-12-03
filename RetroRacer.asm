@@ -151,6 +151,7 @@ InitGame PROC
     mov  score, 0
     mov  alive, 1
     mov  playerLane, 1
+    mov  oldPlayerLane, 1
     mov  tickCount, 0
     mov  rampCounter, 0
 
