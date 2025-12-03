@@ -15,46 +15,49 @@ ExitProcess PROTO, dwExitCode:DWORD
 INCLUDE Irvine32.inc
 
 ; ======================= Constants =========================
-LANES           EQU     3           ; # of lanes
-MAX_OBS         EQU     32          ; max active obstacles tracked at once
+LANES           EQU     3             ; # of lanes
+MAX_OBS         EQU     32            ; max active obstacles tracked at once
 
-BORDER_LEFT     EQU     12          ; left wall x-position, (col)
-BORDER_RIGHT    EQU     44          ; right wall x-position, (row)
-ROAD_TOP        EQU     2           ; first highway row
-ROAD_BOTTOM     EQU     23          ; last highway row
+BORDER_LEFT     EQU     12            ; left wall x-position, (col)
+BORDER_RIGHT    EQU     44            ; right wall x-position, (row)
+ROAD_TOP        EQU     2             ; first highway row
+ROAD_BOTTOM     EQU     23            ; last highway row
 PLAYER_ROW      EQU     ROAD_BOTTOM-1 ; where the car sits (second line from the bottom, might want higher, or the ability to go up and down)
 
-COLOR_HUD       EQU     green + black*16       ; HUD text color on black background
+COLOR_HUD       EQU     green + black*16      ; HUD text color on black background
 COLOR_ROAD      EQU     white + black*16	  ; road text color 
-COLOR_LANE	 EQU     yellow + black*16	  ; lane divide color
-COLOR_CAR		 EQU	    lightRed + black*16		  ; car text color
-COLOR_OBS		 EQU	    red + lightGray*16 ; obstacle text color
+COLOR_LANE	    EQU     yellow + black*16	  ; lane divide color
+COLOR_CAR		EQU	    lightRed + black*16	  ; car text color
+COLOR_OBS		EQU	    red + lightGray*16    ; obstacle text color
 
 ; ======================= DATA =======================
 .data
 ; Column centers for each lane (Modify to make wider/narrower)
 laneX           BYTE    18, 28, 38
+
 ; Variables for the ASCII character to display the road, obstacles, and car
 PLAYER_CHAR     BYTE     0A4h
-OB_CHAR         BYTE	058h     
+OB_CHAR         BYTE	 058h     
 BORDER_CHAR     BYTE     07Ch
 LANE_CHAR       BYTE     0A6h
-; lane marker columns, computed at initial from laneX midpoints
+
+; lane marker columns, computed at initially from laneX midpoints
 marker1Col      BYTE    23
 marker2Col      BYTE    33
 
 ; Game start state
 playerLane      BYTE    1               ; start in middle lane
+oldPlayerLane   BYTE    ?               ; for erasing old position
 alive           BYTE    1               ; 1 = running, 0 = dead
-score           DWORD   0               ; 
-highScore       DWORD   0               ; run per session
+score           DWORD   0               
+highScore       DWORD   0               
 
 ; Game timing & difficulty, can modify later
 tickDelay       WORD    60              ; The ms per frame, for speeding down/up
 spawnOdds       BYTE    14              ; percentage (0..100). Spawn if roll < spawnOdds
 tickCount       DWORD   0               ; tracks frames to know when to speed up/increase difficulty
 obstacleRamp    DWORD   25000           ; amount of time required to increase the number of maximum lanes with obstacles  
-rampCounter	 DWORD   0
+rampCounter	    DWORD   0
 
 ; Obstacles are arrays [0..2] for simplicity:
 obs_active      BYTE    MAX_OBS DUP(0)  ; 1 if in use, clears after user dodges
