@@ -147,6 +147,7 @@ InitGame PROC
 
     call Randomize
     call Clrscr
+
     mov  score, 0
     mov  alive, 1
     mov  playerLane, 1
@@ -169,6 +170,8 @@ InitGame PROC
     mov  marker2Col, al
 
     call ClearObstacles
+    call DrawHUD
+    call DrawRoad
 
     pop ebx
     pop eax
