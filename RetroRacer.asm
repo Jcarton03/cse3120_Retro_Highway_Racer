@@ -18,8 +18,9 @@ INCLUDE Irvine32.inc
 LANES           EQU     3             ; # of lanes
 MAX_OBS         EQU     32            ; max active obstacles tracked at once
 
-BORDER_LEFT     EQU     12            ; left wall x-position, (col)
-BORDER_RIGHT    EQU     44            ; right wall x-position, (row)
+; centered the lanes to the default windows terminal
+BORDER_LEFT     EQU     44            ; left wall x-position, (col)
+BORDER_RIGHT    EQU     76            ; right wall x-position, (row)
 ROAD_TOP        EQU     2             ; first highway row
 ROAD_BOTTOM     EQU     23            ; last highway row
 PLAYER_ROW      EQU     ROAD_BOTTOM-1 ; where the car sits (second line from the bottom, might want higher, or the ability to go up and down)
@@ -33,7 +34,7 @@ COLOR_OBS		EQU	    lightRed + black * 16     ; obstacle text color
 ; ======================= DATA =======================
 .data
 ; Column centers for each lane (Modify to make wider/narrower)
-laneX           BYTE    18, 28, 38
+laneX           BYTE    50, 60, 70
 
 ; Variables for the ASCII character to display the road, obstacles, and car
 PLAYER_CHAR     BYTE     0DBh
