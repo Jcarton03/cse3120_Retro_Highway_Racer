@@ -37,7 +37,7 @@ COLOR_OBS		EQU	    lightRed + black * 16     ; obstacle text color
 laneX           BYTE    50, 60, 70
 
 ; Variables for the ASCII character to display the road, obstacles, and car
-PLAYER_CHAR     BYTE     0A4h
+PLAYER_CHAR     BYTE     0DBh         ; open to being changed
 OB_CHAR         BYTE	 058h     
 BORDER_CHAR     BYTE     07Ch
 LANE_CHAR       BYTE     0A6h
