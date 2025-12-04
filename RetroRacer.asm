@@ -808,6 +808,9 @@ GOS_Display:
     mov  edx, OFFSET scoreStr
     call WriteString
     mov  eax, score
+    ; easy fix to align the counter score at the top
+    ; of the screen with the gameover score
+    sub eax, 1
     call WriteDec
 
     ; wait for any key
