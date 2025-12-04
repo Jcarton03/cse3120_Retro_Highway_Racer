@@ -555,18 +555,51 @@ DrawPlayer PROC
     push eax
     push edx
 
-    mov  eax, COLOR_ROAD
-    call SetTextColor
+    ; erase old player, bg restore
+    mov dh, PLAYER_ROW
+    movzx eax, oldPlayerLane
+    mov dl, [laneX + eax]
 
-    mov  dh, PLAYER_ROW     ; DH = player’s fixed row near bottom
-    movzx eax, playerLane   ; EAX = lane index 0,1,2
-    mov  dl, [laneX + eax]  ; DL = column center of that lane
-    call Gotoxy             ; move cursor to PLAYER_ROW, laneX
+    ; restore lane bg
+    call Gotoxy
+    mov al, dl
+
+    ; lane marker r
+    cmp al, marker1Col
+    je RestoreLane
+    cmp al, marker2Col
+    je RestoreLane
+
+    ; restore to empty space, no flicker
+    mov eax, COLOR_ROAD
+    call SetTextColor
+    mov al, ' '             ; ensure bg is restores to blank
+    call WriteChar
+    jmp DrawNewPlayer
+
+    RestoreLane:
+    mov eax, COLOR_LANE
+    call SetTextColor
+    mov al, LANE_CHAR
+    call WriteChar
+
+DrawNewPlayer:
+    ; draw the new player position back
     mov eax, COLOR_CAR
     call SetTextColor
-    mov  al, PLAYER_CHAR
-    call WriteChar          ; print the player car
 
+    movzx eax, playerLane
+    mov dl, [laneX + eax]
+    mov dh, PLAYER_ROW
+    call Gotoxy
+    mov al, PLAYER_CHAR
+    call WriteChar
+
+    ; save the lane for next move ref
+    mov al, playerLane
+    mov oldPlayerLane, al
+
+    ; reset
     pop edx
     pop eax
     ret
