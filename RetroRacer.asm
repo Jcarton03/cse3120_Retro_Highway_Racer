@@ -538,52 +538,73 @@ DrawHUD ENDP
 ; ===================================================================
 DrawRoad PROC
     push eax
+    push ebx
     push ecx
-    push edx        ; registers to modify
+    push edx
     
-    mov  eax, COLOR_ROAD    ; set the color, white on black
-    call SetTextColor
-
-    ; Draw rows ROAD_TOP --> ROAD_BOTTOM
+    ; rows ROAD_TOP → ROAD_BOTTOM
     mov  ecx, ROAD_BOTTOM - ROAD_TOP + 1
     mov  dh, ROAD_TOP
 
-DR_RowLoop:
+DR_RowLoop :
+    mov  eax, COLOR_ROAD
+    call SetTextColor
+    
     ; left border
-    mov  dl, BORDER_LEFT    ; DL = X col position
-    call Gotoxy             ; move cursor to row=DH, col=DL
-    mov  al, BORDER_CHAR    ; AL = '│'
-    call WriteChar
-
-    ; right border
-    mov  dl, BORDER_RIGHT   ; right wall column
+    mov  dl, BORDER_LEFT
     call Gotoxy
     mov  al, BORDER_CHAR
-    call WriteChar         
-
-    ; Draw first marker (between lane 1 & lane 2)
-    mov  dl, marker1Col     ; precomputed midpoint column
-    call Gotoxy
-    mov eax, COLOR_LANE
-    call SetTextColor
-    mov  al, LANE_CHAR      ; AL = '¦'
     call WriteChar
-
-    ; Draw second marker (between lane 2 & lane 3)
-    mov  dl, marker2Col
+    
+    ; right border
+    mov  dl, BORDER_RIGHT
     call Gotoxy
+    mov  al, BORDER_CHAR
+    call WriteChar
+    
+    ; interior + lane markers
+    mov  bl, BORDER_LEFT
+    inc  bl; one inside left border
+    
+    DR_ColLoop :
+    cmp  bl, BORDER_RIGHT
+    jge  DR_AfterCols
+    
+    mov  dl, bl
+    call Gotoxy
+    
+    ; lane markers
+    mov  al, bl
+    cmp  al, marker1Col
+    je   DR_WriteLane
+    cmp  al, marker2Col
+    je   DR_WriteLane
+    
+    ; normal road space
+    mov  eax, COLOR_ROAD
+    call SetTextColor
+    mov  al, ' '
+    call WriteChar
+    jmp  DR_NextCol
+
+DR_WriteLane :
+    mov  eax, COLOR_LANE
+    call SetTextColor
     mov  al, LANE_CHAR
     call WriteChar
-    mov eax, COLOR_ROAD
-    call SetTextColor
 
-DR_NextRow:
-    inc  dh                 ; move to next row
-    loop DR_RowLoop         ; ECX--, repeat until 0
+DR_NextCol :
+    inc  bl
+    jmp  DR_ColLoop
 
-    pop edx 
-    pop ecx
-    pop eax        ; restore registers
+DR_AfterCols :
+    inc  dh
+    loop DR_RowLoop
+    
+    pop  edx
+    pop  ecx
+    pop  ebx
+    pop  eax
     ret
 DrawRoad ENDP
 
