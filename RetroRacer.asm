@@ -24,11 +24,11 @@ ROAD_TOP        EQU     2             ; first highway row
 ROAD_BOTTOM     EQU     23            ; last highway row
 PLAYER_ROW      EQU     ROAD_BOTTOM-1 ; where the car sits (second line from the bottom, might want higher, or the ability to go up and down)
 
-COLOR_HUD       EQU     green + black*16      ; HUD text color on black background
-COLOR_ROAD      EQU     white + black*16	  ; road text color 
-COLOR_LANE	    EQU     yellow + black*16	  ; lane divide color
-COLOR_CAR		EQU	    lightRed + black*16	  ; car text color
-COLOR_OBS		EQU	    red + lightGray*16    ; obstacle text color
+COLOR_HUD       EQU     lightCyan + black * 16    ; HUD text color on black background
+COLOR_ROAD      EQU     cyan + black * 16	      ; road text color 
+COLOR_LANE	    EQU     lightBlue + black * 16	  ; lane divide color
+COLOR_CAR		EQU	    yellow	                  ; car text color
+COLOR_OBS		EQU	    lightRed + black * 16     ; obstacle text color
 
 ; ======================= DATA =======================
 .data
