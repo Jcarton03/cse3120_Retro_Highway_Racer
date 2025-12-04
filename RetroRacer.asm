@@ -374,7 +374,7 @@ NextObs:
     mov al, ' '
     call WriteChar
 
-NoErase:
+SkipErase:
     ; move down
     mov al, [edi]
     inc al
