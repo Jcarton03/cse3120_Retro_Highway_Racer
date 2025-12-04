@@ -816,6 +816,10 @@ GOS_Display:
     call SetTextColor
     call Clrscr
 
+    ; resets the console text color
+    mov eax, white + black * 16
+    call SetTextColor
+
     pop edx
     pop eax
 
