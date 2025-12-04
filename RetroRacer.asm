@@ -457,6 +457,7 @@ CheckCollision ENDP
 DrawFrame PROC
     call DrawObstacles
     call DrawPlayer
+    call DrawScoreOnly
     ret
 DrawFrame ENDP
 
