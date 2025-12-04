@@ -460,6 +460,27 @@ DrawFrame PROC
     ret
 DrawFrame ENDP
 
+; ===================================================================
+; DrawFrame — updates the score number on the hud
+; ===================================================================
+DrawScoreOnly PROC
+    push eax
+    push edx
+
+    mov eax, COLOR_HUD
+    call SetTextColor
+
+    mov dh, 0
+    mov dl, 62
+    call Gotoxy
+
+    mov eax, score
+    call WriteDec
+
+    pop edx
+    pop eax
+    ret
+DrawScoreOnly ENDP
 
 ; ===================================================================
 ; DrawHUD — title, controls text, and score/highscore above the game board
