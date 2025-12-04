@@ -796,16 +796,17 @@ GOS_Display:
     mov  eax, COLOR_HUD
     call SetTextColor
 
-    ; center-ish message
-    mov  dh, 12
-    mov  dl, 10
+    ; center-ish message, use of road variables allows for 
+    ; auto centering when updating the road position
+    mov  dh, ROAD_BOTTOM - 14
+    mov  dl, BORDER_LEFT - 3
     call Gotoxy
     mov  edx, OFFSET gameOverStr
     call WriteString
 
     ; print final score below
-    mov  dh, 14
-    mov  dl, 10
+    mov  dh, ROAD_BOTTOM - 12
+    mov  dl, BORDER_LEFT + 12
     call Gotoxy
     mov  edx, OFFSET scoreStr
     call WriteString
