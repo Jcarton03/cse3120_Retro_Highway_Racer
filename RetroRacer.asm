@@ -472,8 +472,8 @@ DrawScoreOnly PROC
     mov eax, COLOR_HUD
     call SetTextColor
 
-    mov dh, 0
-    mov dl, 62
+    mov dh, 1
+    mov dl, 63
     call Gotoxy
 
     mov eax, score
@@ -494,22 +494,22 @@ DrawHUD PROC
     mov  eax, COLOR_HUD
     call SetTextColor
 
-    ; Title (row 0, col 0)
+    ; Title (row 0, centered on middle lane)
     mov  dh, 0
-    mov  dl, 0
+    mov  dl, BORDER_LEFT + 7
     call Gotoxy
     mov  edx, OFFSET titleStr
     call WriteString
 
     ; Controls (row 1, col 0)
-    mov  dh, 1
-    mov  dl, 0
+    mov  dh, ROAD_BOTTOM
+    mov  dl, BORDER_LEFT - 40
     call Gotoxy
     mov  edx, OFFSET controlsStr
     call WriteString
 
-    ; Score (row 0, center of middle lane)
-    mov  dh, 0
+    ; Score (row 1, center of middle lane)
+    mov  dh, 1
     ; keeps the score centered in the lanes
     mov  dl, BORDER_LEFT + 12
     call Gotoxy
