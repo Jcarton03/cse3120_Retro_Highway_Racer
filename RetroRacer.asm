@@ -508,9 +508,10 @@ DrawHUD PROC
     mov  edx, OFFSET controlsStr
     call WriteString
 
-    ; Score (row 0, right-ish)
+    ; Score (row 0, center of middle lane)
     mov  dh, 0
-    mov  dl, 55
+    ; keeps the score centered in the lanes
+    mov  dl, BORDER_LEFT + 12
     call Gotoxy
     mov  edx, OFFSET scoreStr
     call WriteString
