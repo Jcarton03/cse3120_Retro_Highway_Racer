@@ -348,16 +348,34 @@ UpdateObstacles PROC
     push edx
     push esi
     push edi
+    push ebx
 
     mov esi, OFFSET obs_active
     mov edi, OFFSET obs_row
+    mov ebx, OFFSET obs_lane
     mov ecx, MAX_OBS
 
 NextObs:
     cmp BYTE PTR [esi], 1        ; only update active obstacles
     jne SkipObs
 
-    ; increment row by 1
+    ; erase old positions if inside road
+    mov al, [edi]
+    cmp al, ROAD_TOP
+    jl SkipErase
+    cmp al, ROAD_BOTTOM
+    jg SkipErase
+
+    mov dh, al
+    mov al, [ebx]
+    movzx eax, al
+    mov dl, [laneX + eax]
+    call Gotoxy
+    mov al, ' '
+    call WriteChar
+
+NoErase:
+    ; move down
     mov al, [edi]
     inc al
     mov [edi], al
@@ -372,8 +390,11 @@ NextObs:
 SkipObs:
     inc esi
     inc edi
+    inc ebx
     loop NextObs
 
+    ;reset
+    pop ebx
     pop edi
     pop esi
     pop edx
